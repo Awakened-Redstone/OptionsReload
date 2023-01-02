@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "optionsreload",
+  "version": "${version}",
+  "name": "Options Reload",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/optionsreload/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.awakenedredstone.optionsreload.client.OptionsReloadClient"
+    ],
+    "main": [
+      "com.awakenedredstone.optionsreload.OptionsReload"
+    ]
+  },
+  "mixins": [
+    "optionsreload.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.12",
+    "minecraft": "1.19.3"
+  }
+}
