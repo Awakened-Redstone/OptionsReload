@@ -3,20 +3,13 @@
   "id": "optionsreload",
   "version": "${version}",
   "name": "Options Reload",
-  "description": "",
+  "description": "A simple mod that adds F3 + O to reload the game options from options.txt",
   "authors": [],
   "contact": {},
-  "license": "MIT",
+  "license": "LGPL-3",
   "icon": "assets/optionsreload/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "client": [
-      "com.awakenedredstone.optionsreload.client.OptionsReloadClient"
-    ],
-    "main": [
-      "com.awakenedredstone.optionsreload.OptionsReload"
-    ]
-  },
+  "entrypoints": {},
   "mixins": [
     "optionsreload.mixins.json"
   ],
