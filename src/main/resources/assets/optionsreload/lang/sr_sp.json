@@ -1,3 +1,4 @@
 {
-  "debug.reload_options.help": "F3 + O = Поново учитај опције"
+  "debug.reload_options.help": "F3 + O = Поново учитај опције",
+  "debug.reload_options.message": "Reloaded options"
 }

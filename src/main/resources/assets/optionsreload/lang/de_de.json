@@ -1,3 +1,4 @@
 {
-  "debug.reload_options.help": "F3 + O = Optionen neuladen"
+  "debug.reload_options.help": "F3 + O = Optionen neuladen",
+  "debug.reload_options.message": "Reloaded options"
 }

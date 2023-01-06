@@ -2,8 +2,7 @@ package com.awakenedredstone.optionsreload.mixin;
 
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resource.language.LanguageDefinition;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -28,6 +27,14 @@ public abstract class KeyboardMixin {
     @Shadow
     protected abstract void debugError(String key, Object... args);
 
+    private void reloadOptions() {
+        client.options.load();
+        debugLog("debug.reload_options.message");
+        if (client.world == null) {
+            SystemToast.show(client.getToastManager(), SystemToast.Type.NARRATOR_TOGGLE, Text.translatable("debug.reload_options.message"), null);
+        }
+    }
+
     @Inject(method = "processF3", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;)V",
             ordinal = 6, shift = At.Shift.AFTER))
@@ -38,7 +45,7 @@ public abstract class KeyboardMixin {
     @Inject(method = "processF3", at = @At("RETURN"), cancellable = true)
     private void onProcessF3(int key, CallbackInfoReturnable<Boolean> cir) {
         if (key == GLFW.GLFW_KEY_O) {
-            client.options.load();
+            reloadOptions();
             cir.setReturnValue(true);
         }
     }
@@ -52,7 +59,7 @@ public abstract class KeyboardMixin {
                 if (Objects.requireNonNull(client.currentScreen).passEvents) {
                     switchF3State = true;
                 }
-                client.options.load();
+                reloadOptions();
             }
             ci.cancel();
         }

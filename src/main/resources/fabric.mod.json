@@ -8,13 +8,14 @@
   "contact": {},
   "license": "LGPL-3",
   "icon": "assets/optionsreload/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {},
   "mixins": [
     "optionsreload.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.12",
-    "minecraft": "1.19.3"
+    "fabric": "*",
+    "minecraft": "1.19.x"
   }
 }
