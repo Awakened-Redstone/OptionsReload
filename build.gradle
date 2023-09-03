@@ -1,10 +1,17 @@
+import com.modrinth.minotaur.dependencies.ModDependency
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
+    id 'com.modrinth.minotaur' version '2.+'
     id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
+
+def ENV = System.getenv()
+def CHANGELOG = new File('CHANGELOG.md').exists() ? new File('CHANGELOG.md').text : ""
 
 repositories {
     // Add repositories to retrieve artifacts from in here.
@@ -78,3 +85,57 @@ publishing {
         // retrieving dependencies.
     }
 }
+
+tasks.register('remapMavenJar', RemapJarTask) {
+    dependsOn jar
+    input = jar.archiveFile
+    archiveFileName = "${archivesBaseName}-${project.version}-maven.jar"
+    addNestedDependencies = false
+}
+
+modrinth {
+    String projectVersion = project.version.toString()
+    if (projectVersion.contains("dev")) {
+        System.err.println("Can not publish a dev version to Modrinth!")
+        return
+    }
+
+    List<String> projectVersionNumber = projectVersion.split("-", 2)
+    String projectVersionName = "Release ${projectVersionNumber[0]}"
+    if (projectVersionNumber.size() == 2) {
+        List<String> typeNumber = projectVersionNumber[1].split("\\.", 2)
+        if (projectVersionNumber[1].startsWith("rc")) {
+            projectVersionName = "${projectVersionNumber[0]} - Release Candidate ${typeNumber[1]}"
+            versionType = "beta" //Modrinth doesn't have RC so I use beta
+        } else if (projectVersionNumber[1].startsWith("beta")) {
+            projectVersionName = "${projectVersionNumber[0]} - Beta ${typeNumber[1]}"
+            versionType = "beta"
+        } else if (projectVersionNumber[1].startsWith("alpha")) {
+            projectVersionName = "${projectVersionNumber[0]} - Alpha ${typeNumber[1]}"
+            versionType = "alpha"
+        }
+    }
+
+    token = ENV.MODRINTH_TOKEN
+    projectId = "JePs1Lb3"
+    versionName = projectVersionName
+    changelog = CHANGELOG
+    uploadFile = remapJar
+    dependencies = [
+            new ModDependency("fabric-api", "required")
+    ]
+}
+
+tasks.register('checkVersion') {
+    dependsOn remapMavenJar
+    group = 'verification'
+    doFirst {
+        try {
+            def text = new URL("https://api.modrinth.com/v2/project/${project.archives_base_name}/version/${version}").text
+            throw new RuntimeException("${version} has already been released!")
+        } catch (FileNotFoundException ignored) {}
+    }
+}
+
+tasks.build.dependsOn(tasks.remapMavenJar)
+tasks.modrinth.dependsOn(tasks.checkVersion)
