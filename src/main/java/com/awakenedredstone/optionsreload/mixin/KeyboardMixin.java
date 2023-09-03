@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,8 +26,6 @@ public abstract class KeyboardMixin {
 
     @Shadow
     protected abstract void debugError(String key, Object... args);
-
-    private void reloadOptions() {
         client.options.load();
         debugLog("debug.reload_options.message");
         if (client.world == null) {
@@ -44,7 +43,7 @@ public abstract class KeyboardMixin {
     @Inject(method = "processF3", at = @At("RETURN"), cancellable = true)
     private void onProcessF3(int key, CallbackInfoReturnable<Boolean> cir) {
         if (key == GLFW.GLFW_KEY_O) {
-            reloadOptions();
+            optionsReload$reloadOptions();
             cir.setReturnValue(true);
         }
     }
@@ -55,7 +54,7 @@ public abstract class KeyboardMixin {
     private void onOnKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
         if (InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_F3) && key == GLFW.GLFW_KEY_O) {
             if (action != 0) {
-                reloadOptions();
+                optionsReload$reloadOptions();
             }
             ci.cancel();
         }
