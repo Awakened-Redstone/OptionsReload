@@ -19,7 +19,6 @@ import java.util.Objects;
 @Mixin(Keyboard.class)
 public abstract class KeyboardMixin {
     @Shadow @Final private MinecraftClient client;
-    @Shadow private boolean switchF3State;
 
     @Shadow
     protected abstract void debugLog(String key, Object... args);
