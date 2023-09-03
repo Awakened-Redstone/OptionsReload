@@ -15,8 +15,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Objects;
-
 @Mixin(Keyboard.class)
 public abstract class KeyboardMixin {
     @Shadow @Final private MinecraftClient client;
@@ -24,8 +22,8 @@ public abstract class KeyboardMixin {
     @Shadow
     protected abstract void debugLog(String key, Object... args);
 
-    @Shadow
-    protected abstract void debugError(String key, Object... args);
+    @Unique
+    private void optionsReload$reloadOptions() {
         client.options.load();
         debugLog("debug.reload_options.message");
         if (client.world == null) {
