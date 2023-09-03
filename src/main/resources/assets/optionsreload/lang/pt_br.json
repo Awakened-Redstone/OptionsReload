@@ -1,4 +1,5 @@
 {
   "debug.reload_options.help": "F3 + O = Recarregar configurações",
-  "debug.reload_options.message": "Configurações recarregadas"
+  "debug.reload_options.message": "Configurações recarregadas",
+  "debug.reload_options.description": "Tela fechada para evitar problemas"
 }

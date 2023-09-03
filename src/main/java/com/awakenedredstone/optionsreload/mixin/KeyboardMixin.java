@@ -2,6 +2,9 @@ package com.awakenedredstone.optionsreload.mixin;
 
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.option.GameOptionsScreen;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
@@ -23,11 +26,39 @@ public abstract class KeyboardMixin {
     protected abstract void debugLog(String key, Object... args);
 
     @Unique
+    private boolean optionsReload$shouldCloseScreen() {
+        Screen screen = client.currentScreen;
+        return screen instanceof GameOptionsScreen || screen instanceof OptionsScreen;
+    }
+
+    @Unique
+    private void optionsReload$closeUntilSafe() {
+        Screen screen = client.currentScreen;
+        int i = 5;
+        while (i-- > 0 && screen != null) {
+            if (screen instanceof GameOptionsScreen scr) {
+                screen = ((GameOptionsScreenAccessor) scr).getParent();
+                continue;
+            }
+            if (screen instanceof OptionsScreen scr) {
+                screen = ((OptionsScreenAccessor) scr).getParent();
+                continue;
+            }
+            break;
+        }
+        client.setScreen(screen);
+    }
+
+    @Unique
     private void optionsReload$reloadOptions() {
         client.options.load();
+        boolean closeScreen = optionsReload$shouldCloseScreen();
+        if (closeScreen) optionsReload$closeUntilSafe();
         debugLog("debug.reload_options.message");
+        if (closeScreen) debugLog("debug.reload_options.description");
         if (client.world == null) {
-            SystemToast.show(client.getToastManager(), SystemToast.Type.NARRATOR_TOGGLE, Text.translatable("debug.reload_options.message"), null);
+            SystemToast.add(client.getToastManager(), SystemToast.Type.NARRATOR_TOGGLE, Text.translatable("debug.reload_options.message"),
+                closeScreen ? Text.translatable("debug.reload_options.description") : Text.empty());
         }
     }
 
