@@ -56,9 +56,6 @@ public abstract class KeyboardMixin {
     private void onOnKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
         if (InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_F3) && key == GLFW.GLFW_KEY_O) {
             if (action != 0) {
-                if (Objects.requireNonNull(client.currentScreen).passEvents) {
-                    switchF3State = true;
-                }
                 reloadOptions();
             }
             ci.cancel();
